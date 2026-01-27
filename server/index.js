@@ -35,9 +35,9 @@ if (process.env.NODE_ENV === 'production') {
 app.use('/api/auth', authRoutes);
 app.use('/api/upload', uploadRoutes);
 
-// 生产环境：所有其他路由返回前端
+// 生产环境：所有其他路由返回前端（Express 5 语法）
 if (process.env.NODE_ENV === 'production') {
-  app.get('*', (req, res) => {
+  app.get('/{*splat}', (req, res) => {
     res.sendFile(path.join(__dirname, '../client/dist/index.html'));
   });
 }
