@@ -9,8 +9,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico'],
       manifest: {
-        name: '私密空间',
-        short_name: '私密空间',
+        name: '网络登录器',
+        short_name: '网络登录器',
         description: '私人聊天应用',
         theme_color: '#07c160',
         background_color: '#ffffff',

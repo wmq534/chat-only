@@ -3,7 +3,7 @@
   <div class="login-page">
     <div class="login-container">
       <div class="logo">🔐</div>
-      <h1>私密空间</h1>
+      <h1>网络登录器</h1>
 
       <div v-if="loading" class="loading">加载中...</div>
 
