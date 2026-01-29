@@ -202,6 +202,25 @@ cd client && npm run dev
 # 访问 http://localhost:5173
 ```
 
+## 运维命令
+
+```bash
+# 重启服务
+pm2 restart private-chat
+
+# 查看服务状态
+pm2 status
+
+# 查看日志
+pm2 logs private-chat
+
+# 停止服务
+pm2 stop private-chat
+
+# 启动服务
+pm2 start private-chat
+```
+
 ## 常见问题
 
 ### Q: 使用公网 IP 无法使用麦克风/摄像头？
