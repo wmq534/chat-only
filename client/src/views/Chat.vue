@@ -53,7 +53,7 @@
     <!-- 输入栏 -->
     <footer class="chat-input">
       <div class="input-actions">
-        <button class="icon-btn" @click="showFilePicker">📷</button>
+        <button class="icon-btn" @click="showImagePicker">📷</button>
         <button
           class="icon-btn"
           @mousedown="startRecording"
@@ -61,6 +61,7 @@
           @touchstart.prevent="startRecording"
           @touchend.prevent="stopRecording"
         >🎤</button>
+        <button class="icon-btn" @click="showVideoPicker">🎬</button>
       </div>
       <input
         v-model="inputText"
@@ -116,7 +117,8 @@
     </div>
 
     <!-- 隐藏的文件输入 -->
-    <input type="file" ref="imageInput" accept="image/*,video/*" @change="handleFileSelect" style="display: none" />
+    <input type="file" ref="imageInput" accept="image/*" @change="handleImageSelect" style="display: none" />
+    <input type="file" ref="videoInput" accept="video/*" @change="handleVideoSelect" style="display: none" />
   </div>
 </template>
 
@@ -173,6 +175,7 @@ const previewImageUrl = ref(null)
 
 // 文件输入
 const imageInput = ref(null)
+const videoInput = ref(null)
 
 // 计算属性
 const partnerName = computed(() => partner.value?.nickname || '等待对方加入...')
@@ -249,17 +252,29 @@ function handleTyping() {
   }, 1000)
 }
 
-// 文件选择（图片/视频）
-function showFilePicker() {
+// 图片选择
+function showImagePicker() {
   imageInput.value?.click()
 }
 
-async function handleFileSelect(e) {
+async function handleImageSelect(e) {
   const file = e.target.files[0]
   if (!file) return
 
-  const type = file.type.startsWith('video/') ? 'video' : 'image'
-  await uploadAndSend(file, type)
+  await uploadAndSend(file, 'image')
+  e.target.value = ''
+}
+
+// 视频选择
+function showVideoPicker() {
+  videoInput.value?.click()
+}
+
+async function handleVideoSelect(e) {
+  const file = e.target.files[0]
+  if (!file) return
+
+  await uploadAndSend(file, 'video')
   e.target.value = ''
 }
 
