@@ -278,11 +278,66 @@ async function handleVideoSelect(e) {
   e.target.value = ''
 }
 
+// 压缩图片
+async function compressImage(file, maxWidth = 1920, quality = 0.8) {
+  return new Promise((resolve) => {
+    // 如果不是图片或已经很小，直接返回
+    if (!file.type.startsWith('image/') || file.size < 500 * 1024) {
+      resolve(file)
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const img = new Image()
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        let width = img.width
+        let height = img.height
+
+        // 按比例缩小
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width
+          width = maxWidth
+        }
+
+        canvas.width = width
+        canvas.height = height
+
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(img, 0, 0, width, height)
+
+        canvas.toBlob(
+          (blob) => {
+            const compressedFile = new File([blob], file.name, {
+              type: 'image/jpeg',
+              lastModified: Date.now()
+            })
+            console.log(`图片压缩: ${(file.size/1024).toFixed(0)}KB → ${(compressedFile.size/1024).toFixed(0)}KB`)
+            resolve(compressedFile)
+          },
+          'image/jpeg',
+          quality
+        )
+      }
+      img.src = e.target.result
+    }
+    reader.readAsDataURL(file)
+  })
+}
+
 // 上传文件
 async function uploadAndSend(file, type) {
   const token = sessionStorage.getItem('token')
   const formData = new FormData()
-  formData.append('file', file)
+
+  // 图片先压缩
+  let uploadFile = file
+  if (type === 'image') {
+    uploadFile = await compressImage(file)
+  }
+
+  formData.append('file', uploadFile)
 
   try {
     const res = await fetch('/api/upload', {
@@ -294,9 +349,12 @@ async function uploadAndSend(file, type) {
     const data = await res.json()
     if (res.ok) {
       sendMessage(type, data.url)
+    } else {
+      alert('上传失败: ' + (data.error || '未知错误'))
     }
   } catch (err) {
     console.error('上传失败', err)
+    alert('上传失败，请重试')
   }
 }
 
