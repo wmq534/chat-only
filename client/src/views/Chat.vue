@@ -287,6 +287,10 @@ async function uploadAndSend(file, type) {
 
 // 录音功能
 async function startRecording() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert('当前环境不支持录音功能，请使用 HTTPS 访问')
+    return
+  }
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
     mediaRecorder = new MediaRecorder(stream)
@@ -361,6 +365,10 @@ function formatTime(dateStr) {
 // ========== WebRTC 通话功能 ==========
 
 async function startCall(type) {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert('当前环境不支持通话功能，请使用 HTTPS 访问')
+    return
+  }
   callType.value = type
   sendCallRequest(type)
   await setupPeerConnection(true)
